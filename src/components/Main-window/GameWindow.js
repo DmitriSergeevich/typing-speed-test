@@ -1,34 +1,39 @@
 import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchEngText, fetchRuText } from "../../actions/asyncActions";
+
 
 const GameWindow = () => {
-  const dispatch = useDispatch()
-  const [text, setText] = useState('')
-  const [curentletter, setCurentletter] = useState(0)
-  //const [typeSpeed, setTypeSpeed] = useState(0)
-  const [sumTypeSpeed, setSumTypeSpeed] = useState(0)
-  const [accuracy, setAccuracy] = useState(100)
-  const [isFinish, setIsFinish] = useState(false)
+  const { text } = useSelector(state => state.gameReducer);
+  const { lang, textSize } = useSelector(state => state.mainReducer);
+
+  const dispatch = useDispatch();  
+  const [curentletter, setCurentletter] = useState(0);
+  const [speed, setSpeed] = useState(0);
+  const [sumTypeSpeed, setSumTypeSpeed] = useState(0);
+  const [accuracy, setAccuracy] = useState(100);
+  const [error, errorSet] = useState(false);
+
   
-  const pastTimeShtamp = useRef(0)
-  const allKeyDown = useRef(0)
+  const pastTimeShtamp = useRef(0);
+  const allKeyDown = useRef(0);
+  
   
   useEffect(()=>{
-    fetch('https://baconipsum.com/api/?type=meat-and-filler&paras=1&format=text')
-    .then(resp => resp.text())
-    .then(text => {
-      setText(text)
-    })
-    //setText('text')
-   
+    dispatch(lang === 'ru-lang' ? fetchRuText(textSize) : fetchEngText(textSize))
   },[])
 
-  useEffect(() => {  
+  useEffect(() => {
+    
     const onKeyDown = (event) => {
       
       if (!event.repeat) {
+
+        if (event.key !== text[curentletter] && event.code !== 'CapsLock' && event.code !== 'ShiftLeft' && event.code !== 'ShiftRight') {
+          errorSet(true)
+        }
 
         if (event.key === text[curentletter]) {
           
@@ -36,27 +41,45 @@ const GameWindow = () => {
             setSumTypeSpeed(
               event.timeStamp - pastTimeShtamp.current + sumTypeSpeed
             );
+            setSpeed(
+              curentletter !== 0 && sumTypeSpeed !== 0 ? Math.floor(60 / (sumTypeSpeed / curentletter / 1000)): 0
+            )
           }
-
+          
           setCurentletter(curentletter + 1);
           pastTimeShtamp.current = event.timeStamp;
+          errorSet(false)
+
+          if (curentletter === text.length - 1) {
+            dispatch({type: 'SET_RESULTS', payload: {speed, accuracy}})
+            dispatch({type:'TO_FINISH'})
+          }
         }
 
         if (event.code !== 'CapsLock' && event.code !== 'ShiftLeft' && event.code !== 'ShiftRight') {
           allKeyDown.current++
 
-          if(curentletter !== 0) { 
-            setAccuracy(Math.floor(( curentletter / allKeyDown.current) * 100))
+          if(curentletter !== 0) {
+            setAccuracy(Math.floor(( curentletter / (allKeyDown.current - 1)) * 100))
           }
-        }
-        if (curentletter === text.length - 1) {
-          setIsFinish(true)
-        }
+          
+        }  
       }
     };
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
   });
+
+  const clearParams = () => {
+    setCurentletter(0)
+    setSpeed(0)
+    setSumTypeSpeed(0)
+    setAccuracy(100)
+
+    pastTimeShtamp.current = 0
+    allKeyDown.current = 0
+  }
 
   return (
     <div className="window-gameplay row-dir ">
@@ -64,7 +87,7 @@ const GameWindow = () => {
       <div className="container fit-content bgc-light window-main-column">
         <div className="mainTxt">
           {text.split('').map(( e, k ) => {
-            return ( k === curentletter ? <span key={k} className="wgreen">{e}</span> : <span key={k} className="wblack">{e}</span> )
+            return (<span key={k} className={`wblack ${ k === curentletter ? "wgreen" : null} ${ error && k === curentletter ? "wred" : null}`}>{e}</span> )
           })}
           
         </div>
@@ -73,14 +96,16 @@ const GameWindow = () => {
         <div className="control-params bgc-light window-main-column">
           <div className="">
             <div className="fs-16">Скорость:</div>
-            <div className="fs-24"><span className="fs-32 bold-text">{ curentletter !== 0 && sumTypeSpeed !== 0 ? Math.floor(60 / (sumTypeSpeed / curentletter / 1000)) : 0}</span> зн/мин</div>
+            <div className="fs-24"><span className="fs-32 bold-text">{ speed }</span> зн/мин</div>
           </div>
           <div className="mgt-30">
             <div className="fs-16">Точность:</div>
             <div className="fs-32 bold-text"><span>{accuracy}</span> %</div>
           </div>
         </div>
-        <button id='replay' type="button" className="btn btn-primary window-main-btn btn-fat mgt-20">Заново</button>
+        <button id='replay' type="button" className="btn btn-primary window-main-btn btn-fat mgt-20" onClick={clearParams} 
+          onFocus={(e)=> document.activeElement.blur() }
+        >Заново</button>
         <button id='close' type="button" className="btn btn-outline-primary window-main-btn btn-fat mgt-20"
         onClick={()=>dispatch({type: 'TO_MENU'})}>Завершить</button>        
       </div>
