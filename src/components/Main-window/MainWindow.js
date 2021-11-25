@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import actionCreators from "../../store/actionCreators/actionCreators";
+import actionCreators from "../store/actionCreators/actionCreators";
 
 const MainWindow = () => {
   const dispatch = useDispatch();

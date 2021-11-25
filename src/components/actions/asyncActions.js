@@ -1,3 +1,4 @@
+import { _ERROR_TEXT_ } from "../constans/constans";
 import actionCreators from "../store/actionCreators/actionCreators";
 
 export const fetchRuText = (size) => {
@@ -9,15 +10,23 @@ export const fetchRuText = (size) => {
         dispatch(
           actionCreators.setText(text.replace(regExp, "").replace(regExp, ""))
         );
+      })
+      .catch((e) => {
+        dispatch(actionCreators.setText(_ERROR_TEXT_));
       });
   };
 };
 export const fetchEngText = (size) => {
   return (dispatch) => {
-    fetch(`https://baconipsum.com/api/?type=meat-and-filler&paras=${size}&format=text`)
+    fetch(
+      `https://baconipsum.com/api/?type=meat-and-filler&paras=${size}&format=text`
+    )
       .then((resp) => resp.text())
       .then((text) => {
         dispatch(actionCreators.setText(text));
+      })
+      .catch((e) => {
+        dispatch(actionCreators.setText(_ERROR_TEXT_));
       });
   };
 };

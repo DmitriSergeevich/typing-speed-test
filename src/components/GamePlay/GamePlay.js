@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEngText, fetchRuText } from "../../actions/asyncActions";
-import actionCreators from "../../store/actionCreators/actionCreators";
+import { fetchEngText, fetchRuText } from "../actions/asyncActions";
+import actionCreators from "../store/actionCreators/actionCreators";
 import GameWindow from "../GameWindow/GameWindow";
 
 const GamePlay = () => {
