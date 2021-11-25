@@ -1,0 +1,50 @@
+.finish-blur{
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 100%; 
+  backdrop-filter: blur(7px);
+  background-color: rgba(15, 15, 15, 0.712);
+  z-index: 100;
+}
+
+.finish-modal {
+  position: absolute;
+  width: 700px;
+  height: 600px;
+  left: calc(100% /2.5 - 350px);
+  top: calc(100% /2 - 400px);  
+  display: flex;
+
+}
+
+.modal-man {  
+  background-image: url("../../images/man-modal.png");
+  background-size: cover;
+  height: 287px;
+  width: 252px;
+  
+}
+
+.dialog {
+  display: flex;
+  margin-top: 150px;  
+}
+.dialog-triangle {  
+  width: 0; 
+  height: 0; 
+  border-top: 30px solid transparent;
+  border-bottom: 30px solid transparent;
+  border-right: 30px solid #E5E5E5;
+  margin-top: 30px;  
+}
+.dialog-block {
+  padding: 40px 64px 40px 64px;  
+  background-color: #E5E5E5;
+  border-radius: 25px;
+  box-shadow: 10px 10px 1px #7FB3FD; 
+}
+
+.dialog-results {
+  justify-content: space-around;
+}
