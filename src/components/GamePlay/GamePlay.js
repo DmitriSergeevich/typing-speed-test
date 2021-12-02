@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useRef } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchEngText, fetchRuText } from "../actions/asyncActions";
-import actionCreators from "../store/actionCreators/actionCreators";
+import { fetchEngText, fetchRuText } from "../../actions/asyncActions";
+import actionCreators from "../../store/actionCreators/actionCreators";
 import GameWindow from "../GameWindow/GameWindow";
 
 const GamePlay = () => {
@@ -20,9 +20,15 @@ const GamePlay = () => {
   const pastTimeShtamp = useRef(0);
   const allKeyDown = useRef(0);
 
+  const numTextSize = {
+    's-size': 1,
+    'm-size': 2,
+    'l-size': 3,
+  }
+
   useEffect(() => {
     dispatch(
-      lang === "ru-lang" ? fetchRuText(textSize) : fetchEngText(textSize)
+      lang === "ru-lang" ? fetchRuText(numTextSize[textSize]) : fetchEngText(numTextSize[textSize])
     );
   }, []);
 

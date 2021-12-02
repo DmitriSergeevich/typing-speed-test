@@ -1,8 +1,8 @@
 const initialMainState = {
   isGame: false,
   isFinish: false,
-  textSize: 2,
-  lang: "ru-lang",
+  textSize: 'm-size',
+  lang: 'ru-lang',
 };
 
 const mainReducer = (state = initialMainState, action) => {

@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import actionCreators from "../store/actionCreators/actionCreators";
+import actionCreators from "../../store/actionCreators/actionCreators";
 import { Spinner } from "../Spinner/Spinner";
 
 const GameWindow = (props) => {
